@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var todoTemplate = require("../views/partials/todo.hbs");
 $(function() {
-    $(":button").on('click', addTodo);
+    $("#button").on('click', addTodo);
 
 	$(":text").on('keypress',function(e) {
 	  var key = e.keyCode;
@@ -89,7 +89,7 @@ $(function() {
 	     var id = $li.attr('id');
 	     (function($li){
 	       deleteTodo(id, function(){
-	                       deleteTodoLi($li);
+	            deleteTodoLi($li);
 	       });
 	     })($li);
 	   }
@@ -102,16 +102,20 @@ $(function() {
 //ajax function to add  to do list by sending the text to the api
 var addTodo = function() {
 	   var text = $('#add-todo-text').val();
+	   var token = "Bearer " + localStorage.getItem('token').trim();
+	   console.log(token);
 	   $.ajax({
 		    url: '/api/todos',
 		    type: 'POST',
 		    data: {
-		       text: text
+		       text: text,
+		    },
+		    headers:{
+                "authorization":token
 		    },
 		    dataType: 'json',
 		    success: function(data) {
 				var todo = data.todo[0];
-				console.log(todo);
 				var newLiHtml = todoTemplate(todo);
 				$('form + ul').append(newLiHtml);
 				$('#add-todo-text').val('');
@@ -142,12 +146,16 @@ var initTodoObserver = function () {
 
 // ajax funtion for deleting the to do list 
 var deleteTodo = function(id, cb) {
+	var token = "Bearer " + localStorage.getItem('token').trim();
     $.ajax({
 	    url: '/api/todos/'+id,
 	    type: 'DELETE',
 	    data: {
 	       id: id
 	    },
+	    headers:{
+            "authorization":token
+		},
 	    dataType: 'json',
 	    success: function(data) {
 	      cb();
@@ -160,10 +168,14 @@ var deleteTodoLi = function($li) {
 };
 
 var updateTodo = function(id, data, cb) {
+	var token = "Bearer " + localStorage.getItem('token').trim();
     $.ajax({
 	    url: '/api/todos/'+id,
 	    type: 'PUT',
 	    data: data,
+	    headers:{
+            "authorization":token
+		},
 	    dataType: 'json',
 	    success: function(data) {
 	      cb();
@@ -172,4 +184,61 @@ var updateTodo = function(id, data, cb) {
 };
 
 
+// function which will take input from user using window promt method.
+function login() {
+  var email = prompt("Please enter your email:", "Email");
+  var password = prompt("Please enter your password:", "Password");
+  if (email == null || password == "") {
+    alert("User cancelled the prompt.");
+  } else {
+     $.ajax({
+		    url: '/users/login',
+		    type: 'POST',
+		    data: {
+		    	email: email,
+		       password: password
+		    },
+		    dataType: 'json',
+		    success: function(data) {
+				localStorage.setItem('token', data.token);
+			}
+	   });
+	}
+  
+}
+
+function signup(){
+	console.log("this is from signup");
+	var username = prompt("Please enter your username:", "Username");
+	var email = prompt("Please enter your email:", "Email");
+    var password = prompt("Please enter your password:", "Password");
+    if (username == null || email == "" || password == "") {
+	    alert("User cancelled the prompt.");
+	} else {
+	     $.ajax({
+			    url: '/users/signup',
+			    type: 'POST',
+			    data: {
+			    	email: email,
+			       password: password,
+			       username:username
+			    },
+			    dataType: 'json',
+			    success: function(data) {
+					console.log(data);
+					
+				
+				}
+		   });
+		}
+}
+
+$('#but1').on("click",function(){
+	login();
+})
+
+
+$('#but2').on("click",function(){
+	signup();
+})
 

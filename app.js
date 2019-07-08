@@ -8,13 +8,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-
+var cors = require('cors');
+var passport = require('passport');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var todos = require('./routes/todos/index'); //ADD THIS LINE
 var todosAPI = require('./routes/todos/api');
-
+var jpt = require('./routes/todos/jpt');
 var app = express();
+
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -24,6 +27,8 @@ app.set('view engine', 'hbs');
 
 app.use('/todos', todos);
 app.use('/api/todos', todosAPI);
+app.use('/jpt',jpt);
+
 app.use (
    sassMiddleware({
      src: __dirname + '/sass',
@@ -39,7 +44,7 @@ app.get('/javascripts/bundle.js', browserify('./client/script.js'));
 
 var dbConnectionString = process.env.MONGODB_URI || 'mongodb://localhost:/';
 mongoose.connect(dbConnectionString + 'todos',{ useNewUrlParser: true });
-  
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -50,7 +55,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/todos', todos); //ADD THIS LINE
+// app.use('/todos', todos); //ADD THIS LINE
 if (app.get('env') == 'development') {
   var browserSync = require('browser-sync');
   var config = {
