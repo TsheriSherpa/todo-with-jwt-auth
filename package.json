@@ -21,7 +21,7 @@
     "hbsfy": "^2.8.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.5",
     "mongoose-unique-validator": "^2.0.3",
