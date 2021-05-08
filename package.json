@@ -17,7 +17,7 @@
     "express": "~4.16.1",
     "express-handlebars": "^3.1.0",
     "express-jwt": "^5.3.1",
-    "handlebars": "^4.3.0",
+    "handlebars": "^4.7.7",
     "hbsfy": "^2.8.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
